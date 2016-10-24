@@ -1,0 +1,120 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.victorhom.nytnews.fragments.FilterArticle">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal|top"
+        android:padding="@dimen/activity_vertical_margin"
+        >
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/begin_date"
+            android:id="@+id/tvBeginDate"
+            android:paddingRight="@dimen/activity_vertical_margin"
+            android:layout_alignTop="@+id/etCalendar"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/pastelBlue"
+            />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textCursorDrawable="@drawable/color_cursor"
+            android:id="@+id/etCalendar"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignLeft="@+id/spinnerSort"
+            android:layout_alignStart="@+id/spinnerSort" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sort_order"
+            android:id="@+id/tvSortOrder"
+            android:layout_below="@+id/etCalendar"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/pastelBlue"
+            />
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinnerSort"
+            android:layout_centerHorizontal="true"
+            android:layout_alignTop="@+id/tvSortOrder"
+            android:entries="@array/spinnerItems"
+            android:paddingTop="@dimen/activity_horizontal_margin_b"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/newsTopic"
+            android:id="@+id/tvNewsTopic"
+            android:layout_marginTop="53dp"
+            android:paddingRight="@dimen/activity_vertical_margin"
+            android:layout_below="@+id/tvSortOrder"
+            android:layout_alignLeft="@+id/tvBeginDate"
+            android:layout_alignStart="@+id/tvBeginDate"
+            android:textColor="@color/pastelBlue"/>
+
+        <LinearLayout
+            android:id="@+id/checkboxes"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="50dp"
+            android:layout_alignTop="@+id/tvNewsTopic"
+            android:layout_centerHorizontal="true">
+
+            <android.support.v7.widget.AppCompatCheckBox android:id="@+id/art"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/checkbox_option_a"
+                android:button="@drawable/abc_btn_check_material"
+                android:buttonTint="@color/pastelBlue"
+                />
+            <android.support.v7.widget.AppCompatCheckBox android:id="@+id/fashion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/checkbox_option_b"
+                android:button="@drawable/abc_btn_check_material"
+                android:buttonTint="@color/pastelBlue"
+                />
+            <android.support.v7.widget.AppCompatCheckBox android:id="@+id/sports"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/checkbox_option_c"
+                android:button="@drawable/abc_btn_check_material"
+                android:buttonTint="@color/pastelBlue"
+
+                />
+            <!--android:onClick="onCheckboxClicked"-->
+        </LinearLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save"
+            android:id="@+id/btnSave"
+            android:layout_below="@+id/checkboxes"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="62dp"
+            android:background="@drawable/custom_button"
+            android:textColor="@color/pastelBlue"
+            />
+    </RelativeLayout>
+
+</FrameLayout>
