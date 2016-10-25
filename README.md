@@ -53,6 +53,8 @@ The following **additional** features are implemented:
 Here's a walkthrough of implemented user stories:
 
 <img src='http://i.imgur.com/jv9aGLJ.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='http://i.giphy.com/3oz8xvwETSl44lrzJm.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
 Link since my file might be too big
 http://imgur.com/jv9aGLJ
 
