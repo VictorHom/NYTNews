@@ -3,6 +3,7 @@ package com.example.victorhom.nytnews.activities;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -51,6 +52,8 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
     private String querySave;
     private RecyclerView rvArticles;
     private EndlessRecyclerViewScrollListener scrollListener;
+    private SwipeRefreshLayout swipeContainer;
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -134,8 +137,6 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_articles);
 
-
-
         setView();
         Toolbar menu = (Toolbar) findViewById(R.id.include);
         setSupportActionBar(menu);
@@ -143,13 +144,7 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
         if (savedInstanceState != null) {
             pageSave = savedInstanceState.getInt("page");
             querySave = savedInstanceState.getString("query");
-            //makeAPIGetCall(querySave, 0, false);
-            // trying to save the page and query to scroll back to on orientation change :(
-//            MenuItem temp =  menu.getMenu().findItem(R.id.action_search);
-//            SearchView sv = (SearchView) MenuItemCompat.getActionView(temp);
-//            sv.setQuery(querySave, true);
         }
-
 
     }
 
@@ -160,9 +155,9 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
         articles = new ArrayList<>();
         articleAdapter = new ArticleAdapter(this, articles);
         rvArticles.setAdapter(articleAdapter);
-        //StaggeredGridLayoutManager gridLayoutManager;
+        StaggeredGridLayoutManager gridLayoutManager;
 //        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-        StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+        gridLayoutManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
 //        } else {
 //            gridLayoutManager = new StaggeredGridLayoutManager(5, StaggeredGridLayoutManager.VERTICAL);
 //        }
@@ -185,6 +180,19 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
 
         // Adds the scroll listener to RecyclerView
         rvArticles.addOnScrollListener(scrollListener);
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+    }
+
+    private void setSwipeRefresh() {
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(() -> {
+            makeAPIGetCall(querySave, pageSave, true);
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(R.color.pastelBlue,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
     }
 
     // this method is used for the initial page load of page 0 in onCreateOptionsMenu
@@ -212,20 +220,16 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
         okClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                ArticlesActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // shows when I turn off wifi
-                        Toast.makeText(ArticlesActivity.this, "Sorry, we are unable to retrieve articles from NYT at this time", Toast.LENGTH_LONG).show();
-                        if (!Checker.isOnline()) {
-                            Toast.makeText(ArticlesActivity.this, "Check to make sure you are connected to wifi", Toast.LENGTH_LONG).show();
-                        } else if (!Checker.isNetworkConnected(getApplicationContext())) {
-                            Toast.makeText(ArticlesActivity.this, "There could be a network problem", Toast.LENGTH_LONG).show();
-                        }
-
+                ArticlesActivity.this.runOnUiThread(() -> {
+                    // shows when I turn off wifi
+                    Toast.makeText(ArticlesActivity.this, "Sorry, we are unable to retrieve articles from NYT at this time", Toast.LENGTH_LONG).show();
+                    if (!Checker.isOnline()) {
+                        Toast.makeText(ArticlesActivity.this, "Check to make sure you are connected to wifi", Toast.LENGTH_LONG).show();
+                    } else if (!Checker.isNetworkConnected(getApplicationContext())) {
+                        Toast.makeText(ArticlesActivity.this, "There could be a network problem", Toast.LENGTH_LONG).show();
                     }
-                });
 
+                });
 
             }
 
@@ -235,31 +239,30 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
                 final boolean clear = clearArticlesFinal;
 
                 // Run view-related code back on the main thread
-                ArticlesActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
+                ArticlesActivity.this.runOnUiThread(() -> {
+                    try {
 
-                            JSONObject json = new JSONObject(responseData);
-                            JSONArray jsonArticle = json.getJSONObject("response").getJSONArray("docs");
-                            if (jsonArticle.length() == 0) {
-                                throw new JSONException("no retrievals made");
-                            }
-                            if (clear) {
-                                // 1. First, clear the array of data
-                                articles.clear();
-                                // 2. Notify the adapter of the update
-                                articleAdapter.notifyDataSetChanged(); // or notifyItemRangeRemoved
-                                // 3. Reset endless scroll listener when performing a new search
-                                scrollListener.resetState();
-                            }
-                            articles.addAll(Article.fromJSONArray(jsonArticle));
-                            articleAdapter.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(ArticlesActivity.this, "We are having a tough time retrieving articles or there are no articles from your search", Toast.LENGTH_LONG).show();
-
+                        JSONObject json = new JSONObject(responseData);
+                        JSONArray jsonArticle = json.getJSONObject("response").getJSONArray("docs");
+                        if (jsonArticle.length() == 0) {
+                            throw new JSONException("no retrievals made");
                         }
+                        if (clear) {
+                            // 1. First, clear the array of data
+                            articles.clear();
+                            // 2. Notify the adapter of the update
+                            articleAdapter.notifyDataSetChanged(); // or notifyItemRangeRemoved
+                            // 3. Reset endless scroll listener when performing a new search
+                            scrollListener.resetState();
+                        }
+                        articles.addAll(Article.fromJSONArray(jsonArticle));
+                        articleAdapter.notifyDataSetChanged();
+                        // called to stop the reloading animation
+                        swipeContainer.setRefreshing(false);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(ArticlesActivity.this, "We are having a tough time retrieving articles or there are no articles from your search", Toast.LENGTH_LONG).show();
+
                     }
                 });
             }

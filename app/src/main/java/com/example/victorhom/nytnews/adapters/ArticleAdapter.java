@@ -10,10 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.victorhom.nytnews.R;
 import com.example.victorhom.nytnews.activities.SingleArticleActivity;
 import com.example.victorhom.nytnews.models.Article;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -64,6 +64,18 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
             }
         }
 
+    }
+
+    // Clean all elements of the recycler
+    public void clear() {
+        mArticles.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add a list of items
+    public void addAll(List<Article> list) {
+        mArticles.addAll(list);
+        notifyDataSetChanged();
     }
 
     //pass in the articles array into the constructor
@@ -130,7 +142,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         ImageView imageView = viewHolder.ivArticleThumbnail;
         String thumbnail = article.getThumbnail();
         if (!TextUtils.isEmpty(thumbnail)) {
-            Picasso.with(getContext()).load(thumbnail).fit().centerCrop()
+            Glide.with(getContext()).load(thumbnail)
                     .placeholder(R.drawable.cube_send)
                     .error(R.drawable.close_octagon_outline).into(imageView);
         }

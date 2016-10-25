@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * Created by victorhom on 10/21/16.
  */
 public class Article implements Parcelable {
-    String webURL;
+
 
     public String getWebURL() {
         return webURL;
@@ -27,6 +27,7 @@ public class Article implements Parcelable {
         return thumbnail;
     }
 
+    String webURL;
     String headline;
     String thumbnail;
 

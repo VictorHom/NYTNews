@@ -1,7 +1,10 @@
 package com.example.victorhom.nytnews.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -43,12 +46,8 @@ public class SingleArticleActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.menu_item_share) {
             shareLink();
             return true;
@@ -58,10 +57,17 @@ public class SingleArticleActivity extends AppCompatActivity {
     }
 
     private void shareLink() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, article.getWebURL());
-        startActivity(Intent.createChooser(shareIntent, "Share link using"));
+
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        // set toolbar color and/or setting custom actions before invoking build()
+        // Once ready, call CustomTabsIntent.Builder.build() to create a CustomTabsIntent
+        CustomTabsIntent customTabsIntent = builder.build();
+        // set toolbar color
+        builder.setToolbarColor(ContextCompat.getColor(this, R.color.pastelBlue));
+        // add share action to menu list
+        builder.addDefaultShareMenuItem();
+        // and launch the desired Url with CustomTabsIntent.launchUrl()
+        customTabsIntent.launchUrl(this, Uri.parse(article.getWebURL()));
         finish();
     }
 

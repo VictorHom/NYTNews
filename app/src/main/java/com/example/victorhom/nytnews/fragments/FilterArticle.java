@@ -112,12 +112,9 @@ public class FilterArticle extends DialogFragment {
 
         };
 
-        etCalendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        etCalendar.setOnClickListener( (v) -> {
                 new DatePickerDialog(getContext(), date, myCalendar.get(java.util.Calendar.YEAR), myCalendar.get(java.util.Calendar.MONTH),
                         myCalendar.get(java.util.Calendar.DAY_OF_MONTH)).show();
-            }
         });
 
     }
@@ -163,23 +160,20 @@ public class FilterArticle extends DialogFragment {
     }
 
     private void setSaveButtonListener() {
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnSave.setOnClickListener(v -> {
 
-                String calendarText = formatCalendarForQuery(etCalendar.getText().toString());
+            String calendarText = formatCalendarForQuery(etCalendar.getText().toString());
 
-                // if selected "newest" don't need to add to the query
-                 String orderText = formatOrderForQuery(sortOrder.getSelectedItem().toString());
+            // if selected "newest" don't need to add to the query
+             String orderText = formatOrderForQuery(sortOrder.getSelectedItem().toString());
 
-                // get the checkbox desk values
-                ArrayList<String> topics = formatTopicsForQuery();
+            // get the checkbox desk values
+            ArrayList<String> topics1 = formatTopicsForQuery();
 
-                // data for the articles activity to access data for queries
-                passData(calendarText, orderText, topics);
-                // done with the fragment
-                getActivity().getSupportFragmentManager().beginTransaction().remove(FilterArticle.this).commit();
-            }
+            // data for the articles activity to access data for queries
+            passData(calendarText, orderText, topics1);
+            // done with the fragment
+            getActivity().getSupportFragmentManager().beginTransaction().remove(FilterArticle.this).commit();
         });
     }
 
