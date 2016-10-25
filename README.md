@@ -61,6 +61,8 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 Describe any challenges encountered while building the app.
 I got the "infinite scrolling" to work at one point. Then I built extra features and the performance of the api calls from the scrolling seem to get worst. The issue has not been fixed.
 
+In debugger mode, it is working as I step through the code, so it is making it tough to optimize :(
+
 ## Open-source libraries used
 
 - [Android Async HTTP](https://github.com/loopj/android-async-http) - Simple asynchronous HTTP requests with JSON parsing
