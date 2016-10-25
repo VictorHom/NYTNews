@@ -1,6 +1,5 @@
 package com.example.victorhom.nytnews.activities;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
@@ -57,6 +56,10 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         this.menu = menu;
+        // no share item on the articles page
+        MenuItem shareItem = menu.findItem(R.id.menu_item_share);
+        shareItem.setVisible(false);
+        shareItem.setEnabled(false);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         svSearch = searchView;
@@ -157,12 +160,12 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
         articles = new ArrayList<>();
         articleAdapter = new ArticleAdapter(this, articles);
         rvArticles.setAdapter(articleAdapter);
-        StaggeredGridLayoutManager gridLayoutManager;
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            gridLayoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
-        } else {
-            gridLayoutManager = new StaggeredGridLayoutManager(5, StaggeredGridLayoutManager.VERTICAL);
-        }
+        //StaggeredGridLayoutManager gridLayoutManager;
+//        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+//        } else {
+//            gridLayoutManager = new StaggeredGridLayoutManager(5, StaggeredGridLayoutManager.VERTICAL);
+//        }
 
         rvArticles.setLayoutManager(gridLayoutManager);
 
@@ -189,7 +192,7 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
     public void makeAPIGetCall(String query, int page, final boolean clearArticles) {
         OkHttpClient okClient = new OkHttpClient();
         HttpUrl.Builder httpUrl = HttpUrl.parse("https://api.nytimes.com/svc/search/v2/articlesearch.json").newBuilder();
-        httpUrl.addQueryParameter("api-key", "8fc938add67b4665bc6fa41cfa8cda93");
+        httpUrl.addQueryParameter("api-key", "bfabf189143c4a728e507120cecf2d01");
         httpUrl.addQueryParameter("page", String.valueOf(page));
         httpUrl.addQueryParameter("q", query);
         appendAdditionalQueryParams(httpUrl);

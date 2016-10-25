@@ -25,6 +25,13 @@
         />
     <!--app:actionProviderClass="android.support.v7.widget.ShareActionProvider"-->
 
+    <item
+        android:id="@+id/menu_item_share"
+        app:showAsAction="ifRoom|collapseActionView"
+        android:orderInCategory="6"
+        android:icon="@drawable/share_variant"
+        android:title="Share"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider" />
 
 
 </menu>
