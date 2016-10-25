@@ -1,6 +1,7 @@
 package com.example.victorhom.nytnews.activities;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -48,8 +49,6 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
     String date;
     String order;
     ArrayList<String> topics;
-//    private int pageSave = 0;
-//    private String querySave;
     OkHttpClient okClient;
     private RecyclerView rvArticles;
     private EndlessRecyclerViewScrollListener scrollListener;
@@ -168,7 +167,7 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
                 makeAPIGetCall(svSearch.getQuery().toString(), page, false);
-                //scrollListener.resetState();
+//                scrollListener.resetState();
             }
         };
         // Adds the scroll listener to RecyclerView
@@ -206,10 +205,11 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
         Request request = new Request.Builder()
                 .url(okUrl)
                 .build();
-
         apiGetCallHandler(okClient, request, clearArticles);
 
     }
+
+
 
     private void apiGetCallHandler(OkHttpClient okClient, Request request, boolean clearArticles) {
         final boolean clearArticlesFinal = clearArticles;
@@ -231,6 +231,7 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
 
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
+
                 final String responseData = response.body().string();
                 final boolean clear = clearArticlesFinal;
 
@@ -240,9 +241,9 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
 
                         JSONObject json = new JSONObject(responseData);
                         JSONArray jsonArticle = json.getJSONObject("response").getJSONArray("docs");
-                        if (jsonArticle.length() == 0) {
-                            throw new JSONException("no retrievals made");
-                        }
+//                        if (jsonArticle.length() == 0) {
+//                            throw new JSONException("no retrievals made");
+//                        }
                         if (clear) {
                             // 1. First, clear the array of data
                             articles.clear();
@@ -251,13 +252,32 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
                             // 3. Reset endless scroll listener when performing a new search
                             scrollListener.resetState();
                         }
-                        articles.addAll(Article.fromJSONArray(jsonArticle));
-                        articleAdapter.notifyDataSetChanged();
+//                        articles.addAll(Article.fromJSONArray(jsonArticle));
+//                        articleAdapter.notifyDataSetChanged();
+                        for (int i =0; i < Article.fromJSONArray(jsonArticle).size(); i++){
+                            articles.add(Article.fromJSONArray(jsonArticle).get(i));
+                            articleAdapter.notifyDataSetChanged();
+                        }
+
                         // called to stop the reloading animation
                         swipeContainer.setRefreshing(false);
                     } catch (JSONException e) {
+                        if (!response.isSuccessful()) {
+                            //System.out.println("in response" + response.code());
+                            if (String.valueOf(response.code()).equals("429")) {
+                                Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        apiGetCallHandler(okClient,request,clearArticles);
+                                    }
+                                }, 3000);
+
+                            }
+//                    throw new IOException(String.valueOf(response));
+                        }
                         e.printStackTrace();
-                        Toast.makeText(ArticlesActivity.this, "We are having a tough time retrieving articles or there are no articles from your search", Toast.LENGTH_LONG).show();
+//                        Toast.makeText(ArticlesActivity.this, "We are having a tough time retrieving articles or there are no articles from your search", Toast.LENGTH_LONG).show();
 
                     }
                 });
