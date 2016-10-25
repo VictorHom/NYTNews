@@ -48,8 +48,9 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
     String date;
     String order;
     ArrayList<String> topics;
-    private int pageSave = 0;
-    private String querySave;
+//    private int pageSave = 0;
+//    private String querySave;
+    OkHttpClient okClient;
     private RecyclerView rvArticles;
     private EndlessRecyclerViewScrollListener scrollListener;
     private SwipeRefreshLayout swipeContainer;
@@ -71,7 +72,8 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
             public boolean onQueryTextSubmit(String query) {
                 // perform query here
                 makeAPIGetCall(query, 0, true);
-                querySave = query;
+                //scrollListener.resetState();
+//                querySave = query;
                 // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
                 // see https://code.google.com/p/android/issues/detail?id=24599
                 searchView.clearFocus();
@@ -136,16 +138,11 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_articles);
-
+        okClient = new OkHttpClient();
         setView();
         Toolbar menu = (Toolbar) findViewById(R.id.include);
         setSupportActionBar(menu);
-
-        if (savedInstanceState != null) {
-            pageSave = savedInstanceState.getInt("page");
-            querySave = savedInstanceState.getString("query");
-        }
-
+        setSwipeRefresh();
     }
 
     public void setView() {
@@ -170,9 +167,8 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                pageSave = page;
-                querySave = svSearch.getQuery().toString();
-                makeAPIGetCall(querySave, page, false);
+                makeAPIGetCall(svSearch.getQuery().toString(), page, false);
+                //scrollListener.resetState();
             }
         };
         // Adds the scroll listener to RecyclerView
@@ -186,7 +182,8 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
     private void setSwipeRefresh() {
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(() -> {
-            makeAPIGetCall(querySave, pageSave, true);
+            makeAPIGetCall(svSearch.getQuery().toString(), 0, true);
+
         });
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(R.color.pastelBlue,
@@ -198,7 +195,6 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
     // this method is used for the initial page load of page 0 in onCreateOptionsMenu
     // then additional calls in onCreate
     public void makeAPIGetCall(String query, int page, final boolean clearArticles) {
-        OkHttpClient okClient = new OkHttpClient();
         HttpUrl.Builder httpUrl = HttpUrl.parse("https://api.nytimes.com/svc/search/v2/articlesearch.json").newBuilder();
         httpUrl.addQueryParameter("api-key", "bfabf189143c4a728e507120cecf2d01");
         httpUrl.addQueryParameter("page", String.valueOf(page));
@@ -316,8 +312,8 @@ public class ArticlesActivity extends AppCompatActivity implements FilterArticle
     @Override
     protected void onSaveInstanceState (Bundle bundle) {
         super.onSaveInstanceState(bundle);
-        bundle.putInt("page", pageSave);
-        bundle.putString("query", querySave);
+//        bundle.putInt("page", pageSave);
+//        bundle.putString("query", querySave);
     }
 
 }
