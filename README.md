@@ -52,7 +52,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 Have not done the gif recording as of now
-<img src='http://i.imgur.com/LyLrKot.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='http://i.imgur.com/jv9aGLJ.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
@@ -62,6 +62,8 @@ Describe any challenges encountered while building the app.
 I got the "infinite scrolling" to work at one point. Then I built extra features and the performance of the api calls from the scrolling seem to get worst. The issue has not been fixed.
 
 In debugger mode, it is working as I step through the code, so it is making it tough to optimize :(
+
+Update: I needed to make additional calls when there was a status code 429 since I was making queries too quickly! The scrolling works now.
 
 ## Open-source libraries used
 
